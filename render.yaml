@@ -1,2 +1,3 @@
 buildCommand: pip install -r requirements.txt
 startCommand: /home/nelly/development/ft06-phase-5/furniture-project/furniture-app-back-end/.venv/bin/gunicorn app:app
+
