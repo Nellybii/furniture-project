@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
+from flask_jwt_extended import jwt_required,  current_user
 from models import db, ProductModel
 import logging
 
@@ -10,7 +11,6 @@ product_fields = {
     "title": fields.String,
     "description": fields.String,
     "price": fields.Float,
-    "user_id": fields.Integer,
     "category_id": fields.Integer,
     "image_url": fields.String
 }
@@ -25,7 +25,6 @@ class ProductList(Resource):
 class Product(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('user_id', type=int, help='This field cannot be blank', required=True)
         self.parser.add_argument('title', type=str, help='This field cannot be blank', required=True)
         self.parser.add_argument('description', type=str, help='This field cannot be blank', required=True)
         self.parser.add_argument('price', type=float, help='This field cannot be blank', required=True)
@@ -45,8 +44,10 @@ class Product(Resource):
                 abort(404, message="Product not found")
         else:
             abort(400, message="Please provide either product id or user_id")
-
+    # @jwt_required()
     def post(self):
+        # if current_user['role'] != 'admin':
+        #     return { "message":"Unauthorized request"}
         args = self.parser.parse_args()
         existing_product = ProductModel.query.filter_by(title=args['title']).first()
         if existing_product:

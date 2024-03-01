@@ -34,11 +34,11 @@ class SignUpResource(Resource):
     parser.add_argument('password', required=True, help="Password is required")
 
     @marshal_with(user_fields)
-    @jwt_required()     
-    def get(self):
-        current_user = get_jwt_identity()
-        if current_user:
-            user=UserModel.query.filter_by(id=current_user).first()
+    #@jwt_required()     
+    def get(self, id=None):
+        # current_user = get_jwt_identity()
+        if id:
+            user=UserModel.query.filter_by(id=id).first()
             if user is not None:
                 return user, 200 
             else:

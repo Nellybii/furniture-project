@@ -2,6 +2,7 @@ from flask import Flask# , jsonify, request
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_restful import Api
+import os
 from models import db,UserModel# ,PaymentModel
 from resources.category import Category,CategoryList
 from resources.user import SignUpResource,LoginResource
@@ -21,7 +22,8 @@ app = Flask(__name__)
 
 
 # Configure database URI and disable track modifications
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+# postgresql://furniture_gardens_user:UA8fv03mbi0bpQdkw9aVVloP29DDzPZq@dpg-cngh0i7109ks73ftn8v0-a.frankfurt-postgres.render.com/furniture_gardens
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = "jwt-secret"
 
