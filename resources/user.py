@@ -54,7 +54,7 @@ class SignUpResource(Resource):
         data['password'] = generate_password_hash(data['password'])
         # data['role']= 'member'
         valid_roles = ['member', 'admin']
-        if data['role'].lower() not in valid_roles:
+        if data['role'] not in valid_roles:
             abort(400, error="Invalid role. Allowed roles are 'member' or 'admin'.")
 
         user = UserModel(**data)
