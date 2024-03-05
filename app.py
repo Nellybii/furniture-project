@@ -12,27 +12,26 @@ from resources.mpesa import STKPushResource, CallbackResource
 from flask_jwt_extended import JWTManager
 # import requests
 from flask_cors import CORS
-# from requests.auth import HTTPBasicAuth
-# from datetime import datetime
 from flask_mail import Mail
 from resources.review import ReviewList,Review_id
+from dotenv import load_dotenv
 
 
 
 app = Flask(__name__)
-
+load_dotenv()
 
 # Configure database URI and disable track modifications
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 # postgresql://furniture_gardens_project_user:S1p7Qwv8CERn9td44z3H11OcpoceuvHp@dpg-cnjhcuun7f5s73f93jr0-a.frankfurt-postgres.render.com/furniture_gardens_project
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = "jwt-secret"
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'furnituregareden32@gmail.com'  
-app.config['MAIL_PASSWORD'] = 'hasoxasnnvhjupec'   
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')   
 
 mail = Mail(app)
 
@@ -66,7 +65,7 @@ api.add_resource(STKPushResource, '/mpesa/stk_push')
 api.add_resource(CallbackResource, '/mpesa/callback')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)
 
 # consumer_key = 'FhrGbobA03pQ7Ge6OSXCH8V4SJtmU9zeVqohmHdQBzNhpeyE'
 # consumer_secret = 'oysGKHLV5qsTzdblj7BAiYJMXFr5ooJT6kBZun9y18f1Bw6jt1KGyd541VmGGun2'
