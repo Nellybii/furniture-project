@@ -22,16 +22,16 @@ app = Flask(__name__)
 load_dotenv()
 
 # Configure database URI and disable track modifications
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 # postgresql://furniture_gardens_project_user:S1p7Qwv8CERn9td44z3H11OcpoceuvHp@dpg-cnjhcuun7f5s73f93jr0-a.frankfurt-postgres.render.com/furniture_gardens_project
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'furnituregareden32@gmail.com'  
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')   
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')   
 
 mail = Mail(app)
 
