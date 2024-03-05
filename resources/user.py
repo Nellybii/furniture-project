@@ -30,7 +30,7 @@ class SignUpResource(Resource):
     parser.add_argument('email',  required=True, help="Email is required")
     parser.add_argument('phone_number', required=True, help="Phone number is required")
     parser.add_argument('address', required=True, help="Address is required")
-    parser.add_argument('role', type=str, required=False, help="Role is required")
+    parser.add_argument('role', required=False, help="Role is required")
     parser.add_argument('password', required=True, help="Password is required")
 
     @marshal_with(user_fields)
@@ -51,6 +51,7 @@ class SignUpResource(Resource):
     @marshal_with(response_field)
     def post(self):
         data = SignUpResource.parser.parse_args()
+        print(f"Received data: {data}")
         data['password'] = generate_password_hash(data['password'])
         # data['role']= 'member'
         valid_roles = ['member', 'admin']
@@ -70,8 +71,11 @@ class SignUpResource(Resource):
             db.session.add(user)
             db.session.commit()
             return {"message": "User created successfully"}, 201
-        except:
+        except Exception as e:
+            print(f"Error during user creation: {str(e)}")
+            db.session.rollback()  # Rollback changes in case of an error
             abort(500, error="Unsuccessful creation")
+
 
 
 

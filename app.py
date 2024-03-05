@@ -8,6 +8,7 @@ from resources.category import Category,CategoryList
 from resources.user import SignUpResource,LoginResource
 from resources.order import Order
 from resources.product import Product,ProductList
+from resources.mpesa import STKPushResource, CallbackResource
 from flask_jwt_extended import JWTManager
 # import requests
 from flask_cors import CORS
@@ -23,7 +24,7 @@ app = Flask(__name__)
 
 # Configure database URI and disable track modifications
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
-# postgresql://furniture_project_user:ZhurvqKQGk8vJDmd881fmipkb9ZlgTwp@dpg-cngtt07109ks738743h0-a.oregon-postgres.render.com/furniture_project
+# postgresql://furniture_gardens_project_user:S1p7Qwv8CERn9td44z3H11OcpoceuvHp@dpg-cnjhcuun7f5s73f93jr0-a.frankfurt-postgres.render.com/furniture_gardens_project
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = "jwt-secret"
 
@@ -61,6 +62,8 @@ api.add_resource(ProductList, '/products')
 api.add_resource(ReviewList, '/reviews')
 api.add_resource(Review_id, '/reviews/<int:review_id>')
 api.add_resource(Order,'/orders','/orders/<int:id>')
+api.add_resource(STKPushResource, '/mpesa/stk_push')
+api.add_resource(CallbackResource, '/mpesa/callback')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
