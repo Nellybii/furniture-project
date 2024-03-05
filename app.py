@@ -14,12 +14,12 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_mail import Mail
 from resources.review import ReviewList,Review_id
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 
 
 app = Flask(__name__)
-load_dotenv()
+#load_dotenv()
 
 # Configure database URI and disable track modifications
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
