@@ -1,10 +1,10 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse, fields, marshal_with, abort
-from flask_bcrypt import generate_password_hash
+from flask_bcrypt import Bcrypt
 from flask_jwt_extended import jwt_required,  current_user, create_access_token, create_refresh_token, get_jwt_identity
 
 from functools import wraps
-
+bcrypt=Bcrypt()
 from models import db, UserModel
 
 user_fields = {
@@ -52,7 +52,7 @@ class SignUpResource(Resource):
     def post(self):
         data = SignUpResource.parser.parse_args()
         print(f"Received data: {data}")
-        data['password'] = generate_password_hash(data['password'])
+        data['password'] = bcrypt.generate_password_hash(data['password'])
         # data['role']= 'member'
         valid_roles = ['member', 'admin']
         if data['role'] not in valid_roles:

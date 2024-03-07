@@ -1,27 +1,28 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import check_password_hash
+from flask_bcrypt import Bcrypt
 
 # from sqlalchemy.orm import validates
 
 db=SQLAlchemy()
+bcrypt=Bcrypt()
 
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    phone_number = db.Column(db.String(length=20), unique=True, nullable=False)
-    address = db.Column(db.String(64))
-    role=db.Column(db.String(30), server_default='member')
-    password = db.Column(db.String(100))
-    created_at=db.Column(db.TIMESTAMP(),default=db.func.now())
-    updated_at=db.Column(db.TIMESTAMP(),onupdate=db.func.now())
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    phone_number = db.Column(db.String, unique=True, nullable=False)
+    address = db.Column(db.String)
+    role=db.Column(db.String, server_default='member')
+    password = db.Column(db.String)
+    created_at=db.Column(db.TIMESTAMP, default=db.func.now())
+    updated_at=db.Column(db.TIMESTAMP,onupdate=db.func.now())
     products=db.relationship("ProductModel", backref="users",lazy=True) 
     reviews=db.relationship("ReviewModel", backref="users", lazy=True)
     orders=db.relationship("OrderModel",backref="users",lazy=True)
  
     def check_password(self, plain_password):
-        return check_password_hash(self.password, plain_password)
+        return bcrypt.check_password_hash(self.password, plain_password)
 
     def to_json(self):
         return {
