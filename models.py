@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import logging
 
 # from sqlalchemy.orm import validates
 
@@ -22,7 +23,11 @@ class UserModel(db.Model):
     orders=db.relationship("OrderModel",backref="users",lazy=True)
  
     def check_password(self, plain_password):
-        return bcrypt.check_password_hash(self.password, plain_password)
+        try:
+            return bcrypt.check_password_hash(self.password, plain_password)
+        except ValueError as e:
+            logging.error(f"Error checking password for user {self.username}: {e}")
+            return False
 
     def to_json(self):
         return {

@@ -4,8 +4,9 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import jwt_required,  current_user, create_access_token, create_refresh_token, get_jwt_identity
 
 from functools import wraps
-bcrypt=Bcrypt()
 from models import db, UserModel
+
+bcrypt=Bcrypt()
 
 user_fields = {
     'id': fields.Integer,
