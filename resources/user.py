@@ -53,7 +53,9 @@ class SignUpResource(Resource):
     def post(self):
         data = SignUpResource.parser.parse_args()
         print(f"Received data: {data}")
-        data['password'] = bcrypt.generate_password_hash(data['password'])
+        print(bcrypt.generate_password_hash(data['password'], 10))
+        print(bcrypt.generate_password_hash(data['password'], 10))
+        data['password'] = bcrypt.generate_password_hash(data['password'], 10)
         # data['role']= 'member'
         valid_roles = ['member', 'admin']
         if data['role'] not in valid_roles:
@@ -127,7 +129,7 @@ class LoginResource(Resource):
         user =UserModel.query.filter_by(email= data['email']).first()
 
         if user:
-            is_password_correct = user.check_password(data['password'])
+            is_password_correct = user.check_password(bcrypt, data['password'])
 
             if is_password_correct:
                 user_json=user.to_json()

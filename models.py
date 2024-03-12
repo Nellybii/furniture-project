@@ -1,11 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
 import logging
 
 # from sqlalchemy.orm import validates
 
 db=SQLAlchemy()
-bcrypt=Bcrypt()
 
 class UserModel(db.Model):
     __tablename__ = 'users'
@@ -22,9 +20,9 @@ class UserModel(db.Model):
     reviews=db.relationship("ReviewModel", backref="users", lazy=True)
     orders=db.relationship("OrderModel",backref="users",lazy=True)
  
-    def check_password(self, plain_password):
+    def check_password(self,bcrypt, plain_password):
         try:
-            return bcrypt.check_password_hash(self.password, plain_password)
+            bcrypt.check_password_hash(bcrypt.generate_password_hash(plain_password), self.password)
         except ValueError as e:
             logging.error(f"Error checking password for user {self.username}: {e}")
             return False
