@@ -4,9 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import jwt_required,  current_user, create_access_token, create_refresh_token, get_jwt_identity
 
 from functools import wraps
-from models import db, UserModel
-
-bcrypt=Bcrypt()
+from models import db, UserModel,bcrypt
 
 user_fields = {
     'id': fields.Integer,
@@ -52,10 +50,8 @@ class SignUpResource(Resource):
     @marshal_with(response_field)
     def post(self):
         data = SignUpResource.parser.parse_args()
-        print(f"Received data: {data}")
-        print(bcrypt.generate_password_hash(data['password'], 10))
-        print(bcrypt.generate_password_hash(data['password'], 10))
-        data['password'] = bcrypt.generate_password_hash(data['password'], 10)
+        data['password']= bcrypt.generate_password_hash(data['password'],rounds=10).decode('utf-8')
+       
         # data['role']= 'member'
         valid_roles = ['member', 'admin']
         if data['role'] not in valid_roles:
@@ -76,7 +72,7 @@ class SignUpResource(Resource):
             return {"message": "User created successfully"}, 201
         except Exception as e:
             print(f"Error during user creation: {str(e)}")
-            db.session.rollback()  # Rollback changes in case of an error
+            db.session.rollback() 
             abort(500, error="Unsuccessful creation")
 
 
@@ -118,46 +114,35 @@ class SignUpResource(Resource):
             abort(500, error=f"Update for user {id} unsuccessful")
     
 
+
 class LoginResource(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('email', required=True, help="Email is required")
     parser.add_argument('password', required=True, help="Password is required")
 
     def post(self):
-        data=LoginResource.parser.parse_args()
+        data = LoginResource.parser.parse_args()
 
-        user =UserModel.query.filter_by(email= data['email']).first()
-
+        user = UserModel.query.filter_by(email=data['email']).first()
+        
+        
         if user:
-            is_password_correct = user.check_password(bcrypt, data['password'])
-
+            # print(user.password)
+            # print(data['password'])
+            is_password_correct = user.check_password(data['password'])
+            print("Password check result:", is_password_correct)
             if is_password_correct:
-                user_json=user.to_json()
-                access_token=create_access_token(identity=user_json["id"])
-                refresh_token=create_refresh_token(identity=user_json["id"])
-                return {"message": "login successful", "status":"success", "access_token": access_token, "refresh_token": refresh_token, "user":user_json}, 200
-            
+                user_json = user.to_json()
+                access_token = create_access_token(identity=user_json["id"])
+                refresh_token = create_refresh_token(identity=user_json["id"])
+                return {
+                    "message": "login successful",
+                    "status": "success",
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "user": user_json
+                }, 200
             else:
-               return {"message": "invalid email/password", "status":"fail"}, 403
+                return {"message": "invalid email/password", "status": "fail"}, 403
         else:
-            return {"message": "invalid email/password", "status":"fail"}, 403
-
-        
-
-    # def admin_required(self):
-    #     def wrapper(fn):
-    #         @wraps(fn)
-    #         def decorator(*args, **kwargs):
-    #             current_user = get_jwt_identity()
-    #             if current_user.get('role') == 'admin':
-    #                 return fn(*args, **kwargs)
-    #             else:
-    #                 return jsonify(msg="Admins only!"), 403
-
-    #         return decorator
-        
-
-
-
-        
-
+            return {"message": "invalid email/password", "status": "fail"}, 403
